@@ -148,13 +148,21 @@ function PlayCarryingAnimation()
 	TaskPlayAnim(PlayerPedId(), Config.CarryAnimDict, Config.CarryAnimName, speed, speed, -1, 25, 0, false, false, false, '', false)
 end
 
+function Start()
+	EntityInHands = StartCarryingClosestEntity()
+end
+
+function Stop()
+	local entity = EntityInHands
+	EntityInHands = nil
+	StopCarrying(entity)
+end
+
 function ToggleCarry()
 	if EntityInHands then
-		local entity = EntityInHands
-		EntityInHands = nil
-		StopCarrying(entity)
+		Stop()
 	else
-		EntityInHands = StartCarryingClosestEntity()
+		Start()
 	end
 end
 
@@ -168,8 +176,12 @@ CreateThread(function()
 	while true do
 		Wait(0)
 
-		if EntityInHands and not IsEntityPlayingAnim(PlayerPedId(), Config.CarryAnimDict, Config.CarryAnimName, 25) then
-			PlayCarryingAnimation()
+		if EntityInHands then
+			if not IsEntityAttachedToEntity(EntityInHands, PlayerPedId()) then
+				Stop()
+			elseif not IsEntityPlayingAnim(PlayerPedId(), Config.CarryAnimDict, Config.CarryAnimName, 25) then
+				PlayCarryingAnimation()
+			end
 		end
 	end
 end)
