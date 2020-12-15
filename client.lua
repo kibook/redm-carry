@@ -82,8 +82,20 @@ function GetClosestNetworkedEntity()
 	return closestEntity
 end
 
+function LoadAnimDict(dict)
+	if DoesAnimDictExist(dict) then
+		RequestAnimDict(dict)
+
+		while not HasAnimDictLoaded(dict) do
+			Wait(0)
+		end
+	end
+end
+
 function PlayPickUpAnimation()
+	LoadAnimDict(Config.PickUpAnimDict)
 	TaskPlayAnim(PlayerPedId(), Config.PickUpAnimDict, Config.PickUpAnimName, 1.0, 1.0, -1, 0, 0, false, false, false, '', false)
+	RemoveAnimDict(Config.PickUpAnimDict)
 end
 
 function StartCarryingClosestEntity()
@@ -103,7 +115,9 @@ function StartCarryingClosestEntity()
 end
 
 function PlayPutDownAnimation()
+	LoadAnimDict(Config.PutDownAnimDict)
 	TaskPlayAnim(PlayerPedId(), Config.PutDownAnimDict, Config.PutDownAnimName, 1.0, 1.0, -1, 0, 0, false, false, false, '', false)
+	RemoveAnimDict(Config.PutDownAnimDict)
 end
 
 function PlacePedOnGroundProperly(ped)
@@ -145,7 +159,9 @@ function StopCarrying(entity)
 end
 
 function PlayCarryingAnimation()
+	LoadAnimDict(Config.CarryAnimDict)
 	TaskPlayAnim(PlayerPedId(), Config.CarryAnimDict, Config.CarryAnimName, speed, speed, -1, 25, 0, false, false, false, '', false)
+	RemoveAnimDict(Config.CarryAnimDict)
 end
 
 function Start()
