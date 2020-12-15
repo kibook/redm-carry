@@ -131,8 +131,6 @@ end
 function PlaceOnGroundProperly(entity)
 	local entityType = GetEntityType(entity)
 
-	local r1 = GetEntityRotation(entity, 2)
-
 	if entityType == 1 then
 		PlacePedOnGroundProperly(entity)
 	elseif entityType == 2 then
@@ -140,13 +138,11 @@ function PlaceOnGroundProperly(entity)
 	elseif entityType == 3 then
 		PlaceObjectOnGroundProperly(entity)
 	end
-
-	local r2 = GetEntityRotation(entity, 2)
-
-	SetEntityRotation(entity, r2.x, r2.y, r1.z, 2)
 end
 
 function StopCarrying(entity)
+	local heading = GetEntityHeading(entity)
+
 	ClearPedTasks(PlayerPedId())
 
 	PlayPutDownAnimation()
@@ -156,6 +152,7 @@ function StopCarrying(entity)
 	FreezeEntityPosition(entity, false)
 	DetachEntity(entity, false, true)
 	PlaceOnGroundProperly(entity)
+	SetEntityHeading(entity, heading)
 end
 
 function PlayCarryingAnimation()
