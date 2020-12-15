@@ -44,7 +44,9 @@ function EnumeratePeds()
 end
 
 function StartCarrying(entity)
-	AttachEntityToEntity(entity, PlayerPedId(), 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, false, false, true, false, 0, true, false, false)
+	local bone = GetEntityBoneIndexByName(PlayerPedId(), 'skel_r_hand')
+	FreezeEntityPosition(entity, false)
+	AttachEntityToEntity(entity, PlayerPedId(), bone, 0.0, 0.3, -0.3, 0.0, 0.0, 0.0, false, false, true, false, 0, true, false, false)
 end
 
 function GetClosestNetworkedEntity()
@@ -104,6 +106,32 @@ function PlayPutDownAnimation()
 	TaskPlayAnim(PlayerPedId(), Config.PutDownAnimDict, Config.PutDownAnimName, 1.0, 1.0, -1, 0, 0, false, false, false, '', false)
 end
 
+function PlacePedOnGroundProperly(ped)
+	local x, y, z = table.unpack(GetEntityCoords(ped))
+	local found, groundz, normal = GetGroundZAndNormalFor_3dCoord(x, y, z)
+	if found then
+		SetEntityCoordsNoOffset(ped, x, y, groundz + normal.z, true)
+	end
+end
+
+function PlaceOnGroundProperly(entity)
+	local entityType = GetEntityType(entity)
+
+	local r1 = GetEntityRotation(entity, 2)
+
+	if entityType == 1 then
+		PlacePedOnGroundProperly(entity)
+	elseif entityType == 2 then
+		SetVehicleOnGroundProperly(entity)
+	elseif entityType == 3 then
+		PlaceObjectOnGroundProperly(entity)
+	end
+
+	local r2 = GetEntityRotation(entity, 2)
+
+	SetEntityRotation(entity, r2.x, r2.y, r1.z, 2)
+end
+
 function StopCarrying(entity)
 	ClearPedTasks(PlayerPedId())
 
@@ -111,7 +139,9 @@ function StopCarrying(entity)
 
 	Wait(500)
 
+	FreezeEntityPosition(entity, false)
 	DetachEntity(entity, false, true)
+	PlaceOnGroundProperly(entity)
 end
 
 function PlayCarryingAnimation()
