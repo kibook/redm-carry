@@ -47,6 +47,7 @@ function StartCarrying(entity)
 	local bone = GetEntityBoneIndexByName(PlayerPedId(), 'skel_r_hand')
 	local h1 = GetEntityHeading(PlayerPedId())
 	local h2 = GetEntityHeading(entity)
+	NetworkRequestControlOfEntity(entity)
 	FreezeEntityPosition(entity, false)
 	AttachEntityToEntity(entity, PlayerPedId(), bone, 0.0, 0.3, -0.3, 0.0, 0.0, h1 - h2 - 90, false, false, true, false, 0, true, false, false)
 end
@@ -151,6 +152,7 @@ function StopCarrying(entity)
 
 	Wait(500)
 
+	NetworkRequestControlOfEntity(entity)
 	FreezeEntityPosition(entity, false)
 	DetachEntity(entity, false, true)
 	PlaceOnGroundProperly(entity)
