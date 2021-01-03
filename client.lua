@@ -53,15 +53,15 @@ function StartCarrying(entity)
 end
 
 function GetClosestNetworkedEntity()
-	local x1, y1, z1 = table.unpack(GetEntityCoords(PlayerPedId()))
+	local playerCoords = GetEntityCoords(PlayerPedId())
 
 	local minDistance
 	local closestEntity
 
 	for object in EnumerateObjects() do
 		if NetworkGetEntityIsNetworked(object) then
-			local x2, y2, z2 = table.unpack(GetEntityCoords(object))
-			local distance = GetDistanceBetweenCoords(x1, y1, z1, x2, y2, z2, true)
+			local objectCoords = GetEntityCoords(object)
+			local distance = #(playerCoords - objectCoords)
 
 			if distance < Config.MaxDistance and (not minDistance or distance < minDistance) then
 				minDistance = distance
@@ -72,8 +72,8 @@ function GetClosestNetworkedEntity()
 
 	for ped in EnumeratePeds() do
 		if ped ~= PlayerPedId() and NetworkGetEntityIsNetworked(ped) then
-			local x2, y2, z2 = table.unpack(GetEntityCoords(ped))
-			local distance = GetDistanceBetweenCoords(x1, y1, z1, x2, y2, z2, true)
+			local pedCoords = GetEntityCoords(ped)
+			local distance = #(playerCoords - pedCoords)
 
 			if distance < Config.MaxDistance and (not minDistance or distance < minDistance) then
 				minDistance = distance
