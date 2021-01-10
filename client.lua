@@ -199,7 +199,7 @@ CreateThread(function()
 			DisableControlAction(0, 0x018C47CF, true)
 			DisableControlAction(0, 0x2277FAE9, true)
 
-			if not IsEntityAttachedToEntity(EntityInHands, PlayerPedId()) then
+			if not IsEntityAttachedToEntity(EntityInHands, PlayerPedId()) or GetEntityHealth(EntityInHands) == 0 then
 				Stop()
 			elseif not IsEntityPlayingAnim(PlayerPedId(), Config.CarryAnimDict, Config.CarryAnimName, 25) then
 				PlayCarryingAnimation()
