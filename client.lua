@@ -41,7 +41,7 @@ function GetClosestNetworkedEntity()
 			local objectCoords = GetEntityCoords(object)
 			local distance = #(playerCoords - objectCoords)
 
-			if distance < Config.MaxDistance and (not minDistance or distance < minDistance) then
+			if not minDistance or distance < minDistance then
 				minDistance = distance
 				closestEntity = object
 			end
@@ -53,7 +53,7 @@ function GetClosestNetworkedEntity()
 			local pedCoords = GetEntityCoords(ped)
 			local distance = #(playerCoords - pedCoords)
 
-			if distance < Config.MaxDistance and (not minDistance or distance < minDistance) then
+			if not minDistance or distance < minDistance then
 				minDistance = distance
 				closestEntity = ped
 			end
