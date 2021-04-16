@@ -2,45 +2,23 @@ local EntityInHands
 
 RegisterNetEvent('carry:toggle')
 
-local entityEnumerator = {
-	__gc = function(enum)
-		if enum.destructor and enum.handle then
-			enum.destructor(enum.handle)
+function GetNearbyEntities(entityType, coords)
+	local itemset = CreateItemset(true)
+	local size = Citizen.InvokeNative(0x59B57C4B06531E1E, coords, Config.MaxDistance, itemset, entityType, Citizen.ResultAsInteger())
+
+	local entities = {}
+
+	if size > 0 then
+		for i = 0, size - 1 do
+			table.insert(entities, GetIndexedItemInItemset(i, itemset))
 		end
-		enum.destructor = nil
-		enum.handle = nil
 	end
-}
 
-function EnumerateEntities(firstFunc, nextFunc, endFunc)
-	return coroutine.wrap(function()
-		local iter, id = firstFunc()
+	if IsItemsetValid(itemset) then
+		DestroyItemset(itemset)
+	end
 
-		if not id or id == 0 then
-			endFunc(iter)
-			return
-		end
-
-		local enum = {handle = iter, destructor = endFunc}
-		setmetatable(enum, entityEnumerator)
-
-		local next = true
-		repeat
-			coroutine.yield(id)
-			next, id = nextFunc(iter)
-		until not next
-
-		enum.destructor, enum.handle = nil, nil
-		endFunc(iter)
-	end)
-end
-
-function EnumerateObjects()
-	return EnumerateEntities(FindFirstObject, FindNextObject, EndFindObject)
-end
-
-function EnumeratePeds()
-	return EnumerateEntities(FindFirstPed, FindNextPed, EndFindPed)
+	return entities
 end
 
 function StartCarrying(entity)
@@ -58,8 +36,8 @@ function GetClosestNetworkedEntity()
 	local minDistance
 	local closestEntity
 
-	for object in EnumerateObjects() do
-		if NetworkGetEntityIsNetworked(object) then
+	for _, object in ipairs(GetNearbyEntities(3, playerCoords)) do
+		if NetworkGetEntityIsNetworked(object) and not IsEntityAttached(object) then
 			local objectCoords = GetEntityCoords(object)
 			local distance = #(playerCoords - objectCoords)
 
@@ -70,8 +48,8 @@ function GetClosestNetworkedEntity()
 		end
 	end
 
-	for ped in EnumeratePeds() do
-		if ped ~= PlayerPedId() and NetworkGetEntityIsNetworked(ped) then
+	for _, ped in ipairs(GetNearbyEntities(1, playerCoords)) do
+		if ped ~= PlayerPedId() and NetworkGetEntityIsNetworked(ped) and not IsEntityAttached(ped) then
 			local pedCoords = GetEntityCoords(ped)
 			local distance = #(playerCoords - pedCoords)
 
@@ -113,6 +91,7 @@ function StartCarryingClosestEntity()
 
 		return entity
 	else
+		exports.uifeed:showObjective("There is nothing to pick up here.", 3000)
 		return nil
 	end
 end

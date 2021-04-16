@@ -1,6 +1,6 @@
 Config = {}
 
-Config.MaxDistance = 3
+Config.MaxDistance = 3.0
 
 Config.PickUpAnimDict = 'amb_player@world_player_chore@bale_pick_up@male_a@stand_exit_withprop'
 Config.PickUpAnimName = 'exit_front'
