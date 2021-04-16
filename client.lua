@@ -68,7 +68,7 @@ function LoadAnimDict(dict)
 		RequestAnimDict(dict)
 
 		while not HasAnimDictLoaded(dict) do
-			Wait(0)
+			Citizen.Wait(0)
 		end
 	end
 end
@@ -85,7 +85,7 @@ function StartCarryingClosestEntity()
 	if entity then
 		PlayPickUpAnimation()
 
-		Wait(750)
+		Citizen.Wait(750)
 
 		StartCarrying(entity)
 
@@ -129,7 +129,7 @@ function StopCarrying(entity)
 
 	PlayPutDownAnimation()
 
-	Wait(500)
+	Citizen.Wait(500)
 
 	NetworkRequestControlOfEntity(entity)
 	FreezeEntityPosition(entity, false)
@@ -168,9 +168,9 @@ end)
 
 AddEventHandler('carry:toggle', ToggleCarry)
 
-CreateThread(function()
+Citizen.CreateThread(function()
 	while true do
-		Wait(0)
+		Citizen.Wait(0)
 
 		if EntityInHands then
 			DisableControlAction(0, 0x07CE1E61, true)
